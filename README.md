@@ -99,10 +99,6 @@ handle ((\_ -> return ()) :: IOException -> IO ()) $
 
 First, declare flags/switches as a record:
 ```haskell
-{-# LANGUAGE OverloadedStrings #-}
-
-import Prelude()
-import ClassyPrelude
 import System.Console.GetOpt
 
 data Options = Options
