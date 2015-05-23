@@ -82,3 +82,81 @@ case parse myparser filename sourceStream of
   Left  e -> ...
   Right r -> ...
 ```
+
+## Safely handle files
+
+Notice the following code, need to provide type signature for handle's exception handling,
+```haskell
+handle ((\_ -> return ()) :: IOException -> IO ()) $
+    braket (openFile path ReadMode)
+            hClose
+            $ \handle -> do
+              -- use handle
+              return True
+```
+
+## Commandline parsing
+
+First, declare flags/switches as a record:
+```haskell
+{-# LANGUAGE OverloadedStrings #-}
+
+import Prelude()
+import ClassyPrelude
+import System.Console.GetOpt
+
+data Options = Options
+     { optVerbose     :: Bool
+     , optShowVersion :: Bool
+     , optOutput      :: Maybe FilePath
+     , optInput       :: Maybe FilePath
+     , optLibDirs     :: [FilePath]
+     } deriving Show
+```
+
+Define default options
+```haskell
+defaultOptions    = Options
+     { optVerbose     = False
+     , optShowVersion = False
+     , optOutput      = Nothing
+     , optInput       = Nothing
+     , optLibDirs     = []
+     }
+```
+
+Define a list of *functions* that aggregate on the default value:
+
+```haskell
+options :: [OptDescr (Options -> Options)]
+options =
+ [ Option "v" ["verbose"]
+     (NoArg (\ opts -> opts { optVerbose = True }))
+     "chatty output on stderr"
+ , Option "V" ["version"]
+     (NoArg (\ opts -> opts { optShowVersion = True }))
+     "show version number"
+ , Option "o" ["output"]
+     (OptArg ((\ f opts -> opts { optOutput = Just f }) . fromMaybe "output")
+             "FILE")
+     "output FILE"
+ , Option "c" ["input"]
+     (OptArg ((\ f opts -> opts { optInput = Just f }) . fromMaybe "input")
+             "FILE")
+     "input FILE"
+ , Option "L" ["lib"]
+     (ReqArg (\ d opts -> opts { optLibDirs = optLibDirs opts ++ [d] }) "DIR")
+     "library directory"
+ ]
+ ```
+
+Using *foldl'* to apply outstanding options on top of defaults. For errors, print out error message using *usageInfo* helper.
+
+```haskell 
+compilerOpts :: [String] -> IO (Options, [String])
+compilerOpts argv =
+   case getOpt Permute options argv of
+      (o,n,[]  ) -> return (foldl' (flip id) defaultOptions o, n)
+      (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header options))
+   where header = "Usage: ic [OPTION...] files..."
+   ```
