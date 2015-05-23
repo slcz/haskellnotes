@@ -1,5 +1,4 @@
 # haskellnotes
-# Random notes
 ## Classy Prelude
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
