@@ -209,7 +209,7 @@ main = do
     putStrLn $ tshow v
 ```
 
-Examples using haskell mutable vector inside ST monad, notice (ST s) monad is the same as IO, but the effect can not propogate to the outside:
+Examples using haskell mutable vector inside ST monad, notice (ST s) monad is the same as IO, but the effect can not escape to the outside:
 
 ```haskell
 {-# LANGUAGE OverloadedLists #-}
