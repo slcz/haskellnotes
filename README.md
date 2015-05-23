@@ -160,3 +160,20 @@ compilerOpts argv =
       (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header options))
    where header = "Usage: ic [OPTION...] files..."
    ```
+
+Parsing options with effect:
+
+```haskell
+options :: [OptDescr (Options -> IO Options)]
+options =
+ [ Option "v" ["verbose"]
+     (NoArg (\ opts -> return $ opts { optVerbose = True }))
+     "chatty output on stderr"
+ , Option "o" ["output"]
+     (OptArg (\ f opts -> return $ opts { optOutput = f }) "FILE")
+     "output FILE"
+...
+   case getOpt Permute options argv of
+      (o,n,[]  ) -> do o' <- foldM (flip id) defaultOptions o
+                       return (o', n)
+```
