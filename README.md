@@ -174,3 +174,8 @@ options =
                        return (o', n)
 ```
 https://wiki.haskell.org/High-level_option_handling_with_GetOpt
+
+## Haksell Containers
+----------------------------------------------------------------------------------------------------------
+Map k a | HashMap k v | IntMap a | Set a | HashSet a | IntSet | Seq a | Vector a | UVector a | SVector a
+----------------------------------------------------------------------------------------------------------
