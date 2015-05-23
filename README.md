@@ -179,3 +179,32 @@ https://wiki.haskell.org/High-level_option_handling_with_GetOpt
 
 |Map k a | HashMap k v | IntMap a | Set a | HashSet a | IntSet | Seq a | Vector a | HashTable a |
 |--------|-------------|----------|-------|-----------|--------|-------|----------|-------------|
+
+Examples using haskell hashtable:
+
+```haskell
+import Data.HashTable.IO
+
+-- CuckooHashTable BasicHashTable LinearHashTable
+type HashTable k v = CuckooHashTable k v
+
+testhash :: IO (HashTable Text Int)
+testhash = do
+    table <- new
+    insert table "Chris" 156
+    insert table "Mike"  212
+    insert table "Joe"   314
+    delete table "Joe"
+    return table
+
+searchhash :: HashTable Text Int -> Text -> IO (Maybe Int)
+searchhash table key = do
+    lookup table key
+
+main = do
+    table <- testhash
+    v <- searchhash table "Mike"
+    putStrLn $ tshow v
+    v <- searchhash table "Noname"
+    putStrLn $ tshow v
+```
