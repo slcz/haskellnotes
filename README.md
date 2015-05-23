@@ -208,3 +208,23 @@ main = do
     v <- searchhash table "Noname"
     putStrLn $ tshow v
 ```
+
+Examples using haskell mutable vector inside ST monad, notice (ST s) monad is the same as IO, but the effect can not propogate to the outside:
+
+```haskell
+{-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+import Prelude()
+import ClassyPrelude hiding (lookup)
+import Data.Vector.Mutable
+import Control.Monad.ST
+
+mutableVectorDemo = do
+    a <- return $ runST $ do
+            v <- new 1024
+            set v 1023
+            write v 0 1022
+            (,) <$> read v 0 <*> read v 1
+    print a -- (1022, 1023)
+```
