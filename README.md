@@ -173,3 +173,4 @@ options =
       (o,n,[]  ) -> do o' <- foldM (flip id) defaultOptions o
                        return (o', n)
 ```
+https://wiki.haskell.org/High-level_option_handling_with_GetOpt
